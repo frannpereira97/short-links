@@ -33,7 +33,11 @@ function enviarJSON() {
     .then(data => {
         // Aquí manejamos la respuesta del servidor
         // const resultado = JSON.stringify(data, null, 2);
-        document.getElementById('respuesta').textContent = data.Short
+        const respuesta = document.getElementById('respuesta');
+        respuesta.href = data.Short;
+        respuesta.textContent = data.Short;
+        respuesta.target = '_blank';
+
     })
     .catch(error => {
         console.error('Error:', error);

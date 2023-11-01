@@ -3,6 +3,7 @@ package routes
 import (
 	"encoding/json"
 	"net/http"
+	"os"
 
 	"github.com/asaskevich/govalidator"
 	"github.com/frannpereira97/short-links/database"
@@ -60,6 +61,8 @@ func ShortenURL(w http.ResponseWriter, r *http.Request) {
 				w.WriteHeader(http.StatusBadRequest) // 400
 				w.Write([]byte(err.Error()))
 			}
+			// Agrego el dominio al short para la que la respuesta sea completa
+			short.Short = os.Getenv("DOMAIN") + "/" + short.Short
 			json.NewEncoder(w).Encode(&short)
 
 			return
@@ -82,6 +85,7 @@ func ShortenURL(w http.ResponseWriter, r *http.Request) {
 			w.WriteHeader(http.StatusBadRequest) // 400
 			w.Write([]byte(err.Error()))
 		}
+		short.Short = os.Getenv("DOMAIN") + "/" + short.Short
 		json.NewEncoder(w).Encode(&short)
 
 		return
