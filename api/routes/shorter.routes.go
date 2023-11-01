@@ -39,6 +39,7 @@ func ResolveURL(w http.ResponseWriter, r *http.Request) {
 func ShortenURL(w http.ResponseWriter, r *http.Request) {
 
 	var short models.Short
+	var user models.User
 	//customShort := vars["customShort"]
 
 	json.NewDecoder(r.Body).Decode(&short)
@@ -75,11 +76,21 @@ func ShortenURL(w http.ResponseWriter, r *http.Request) {
 		}
 
 	} else if short.Short == "" {
+		tokenH := r.Header.Get("x-jwt-token")
+		claims := GetClaims(tokenH)
+
+		username := claims["usuario"]
+
+		database.DB.Where("user_name = ?", username).First(&user)
+
+		//TESTING
 
 		newShort := uuid.New().String()[:6]
 		short.Short = newShort
 
+		short.UserID = user.ID
 		createdShort := database.DB.Create(&short)
+
 		err := createdShort.Error
 		if err != nil {
 			w.WriteHeader(http.StatusBadRequest) // 400

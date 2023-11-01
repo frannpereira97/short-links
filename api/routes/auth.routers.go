@@ -8,7 +8,6 @@ import (
 	"github.com/frannpereira97/short-links/database"
 	"github.com/frannpereira97/short-links/models"
 	jwt "github.com/golang-jwt/jwt/v4"
-	"github.com/gorilla/mux"
 )
 
 func createJWT(user *models.User) (string, error) {
@@ -25,6 +24,17 @@ func createJWT(user *models.User) (string, error) {
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 
 	return token.SignedString([]byte(signingKey))
+}
+
+func GetClaims(tokenH string) jwt.MapClaims {
+
+	token, _, err2 := new(jwt.Parser).ParseUnverified(tokenH, jwt.MapClaims{})
+	if err2 != nil {
+		return nil
+	}
+	claims := token.Claims.(jwt.MapClaims)
+
+	return claims
 }
 
 func WithJWTAuth(handlerFunc http.HandlerFunc) http.HandlerFunc {
@@ -47,11 +57,9 @@ func WithJWTAuth(handlerFunc http.HandlerFunc) http.HandlerFunc {
 		claims := token.Claims.(jwt.MapClaims)
 
 		//TESTING
-		params := mux.Vars(r)
 		var user models.User
-		database.DB.First(&user, params["id"])
+		database.DB.Where("user_name = ?", claims["usuario"]).First(&user)
 
-		fmt.Println(claims["usuario"], user.UserName)
 		if claims["usuario"] != user.UserName {
 			w.WriteHeader(http.StatusNotFound)
 			w.Write([]byte("No tenes permisos para acceder"))
