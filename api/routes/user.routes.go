@@ -56,7 +56,6 @@ func CreateUserHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	json.NewEncoder(w).Encode(&user)
-
 }
 
 func hashPW(password string) (string, error) {
