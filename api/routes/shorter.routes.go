@@ -20,7 +20,6 @@ func ResolveURL(w http.ResponseWriter, r *http.Request) {
 	json.NewDecoder(r.Body).Decode(&short)
 
 	short.Short = vars["url"]
-
 	database.DB.Where("short = ?", short.Short).First(&short)
 	if short.ID == 0 {
 		w.WriteHeader(http.StatusNotFound)

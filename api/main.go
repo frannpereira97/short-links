@@ -50,6 +50,7 @@ func main() {
 	//Login Request
 	r.Handle("/users/login", tollbooth.LimitFuncHandler(limiter, routes.LoginHandler)).Methods("POST")
 	r.Handle("/users/logout", tollbooth.LimitFuncHandler(limiter, routes.LogoutHandler)).Methods("POST")
+	r.Handle("/users/register", tollbooth.LimitFuncHandler(limiter, routes.RegisterHandler)).Methods("GET")
 
 	//Home with short links
 	r.Handle("/home", tollbooth.LimitFuncHandler(limiter, routes.HomeHandler)).Methods("GET")
@@ -58,7 +59,7 @@ func main() {
 	//Usuarios
 	r.Handle("/users", tollbooth.LimitFuncHandler(limiter, routes.WithJWTAuth(routes.GetUsersHandler))).Methods("GET")
 	r.Handle("/users/{id}", tollbooth.LimitFuncHandler(limiter, routes.WithJWTAuth(routes.GetUserHandler))).Methods("GET")
-	r.Handle("/users", tollbooth.LimitFuncHandler(limiter, routes.WithJWTAuth(routes.CreateUserHandler))).Methods("POST")
+	r.Handle("/users/create", tollbooth.LimitFuncHandler(limiter, routes.CreateUserHandler)).Methods("POST")
 	r.Handle("/users/{id}", tollbooth.LimitFuncHandler(limiter, routes.WithJWTAuth(routes.DeleteUsersHandler))).Methods("DELETE")
 
 	//Crear Short

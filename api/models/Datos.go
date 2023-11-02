@@ -13,6 +13,5 @@ type Datos struct {
 	Provincia       string
 	Ciudad          string
 	Domicilio       string
-	User            User
 	UserID          uint
 }

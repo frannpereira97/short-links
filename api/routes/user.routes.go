@@ -2,6 +2,7 @@ package routes
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 
 	"github.com/frannpereira97/short-links/database"
@@ -31,10 +32,30 @@ func GetUserHandler(w http.ResponseWriter, r *http.Request) {
 
 }
 
+type userData struct {
+	Nombre       string `json:"nombre"`
+	Apellido     string `json:"apellido"`
+	Usuario      string `json:"UserName"`
+	Contraseña   string `json:"Password"`
+	Email        string `json:"email"`
+	Sexo         string `json:"sexo"`
+	Nacionalidad string `json:"nacionalidad"`
+	Provincia    string `json:"provincia"`
+	Ciudad       string `json:"ciudad"`
+	Domicilio    string `json:"Domicilio"`
+}
+
 func CreateUserHandler(w http.ResponseWriter, r *http.Request) {
 	var user models.User
+	var datos models.Datos
+	var uData userData
 
-	json.NewDecoder(r.Body).Decode(&user)
+	json.NewDecoder(r.Body).Decode(&uData)
+
+	//Creo Usuario
+	user.UserName = uData.Usuario
+	user.Password = uData.Contraseña
+	user.Email = uData.Email
 
 	tokenString, err2 := createJWT(&user)
 	if err2 != nil {
@@ -52,9 +73,35 @@ func CreateUserHandler(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest) // 400
 		w.Write([]byte(err.Error()))
+		fmt.Println(err.Error())
 	}
 
-	json.NewEncoder(w).Encode(&user)
+	//Cargo Datos
+	id := GetUserID(user.UserName)
+
+	datos.Nombre = uData.Nombre
+	datos.Apellido = uData.Apellido
+	datos.Sexo = uData.Sexo
+	datos.Nacionalidad = uData.Nacionalidad
+	datos.Provincia = uData.Provincia
+	datos.Ciudad = uData.Ciudad
+	datos.Domicilio = uData.Domicilio
+	datos.UserID = uint(id)
+
+	userData := database.DB.Create(&datos)
+	err2 = userData.Error
+	if err2 != nil {
+		w.WriteHeader(http.StatusBadRequest) // 400
+		w.Write([]byte(err2.Error()))
+		fmt.Println(err2.Error())
+	}
+
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(map[string]string{
+		"message":     "Login correcto",
+		"x-jwt-token": tokenString,
+		"redirectTo":  "/home",
+	})
 }
 
 func hashPW(password string) (string, error) {

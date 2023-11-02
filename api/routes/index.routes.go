@@ -18,6 +18,10 @@ type LoginRequest struct {
 
 var tmpl = template.Must(template.ParseGlob("web/*.html"))
 
+func RegisterHandler(w http.ResponseWriter, r *http.Request) {
+	tmpl.ExecuteTemplate(w, "register.html", nil)
+}
+
 func HomeHandler(w http.ResponseWriter, r *http.Request) {
 	tmpl.ExecuteTemplate(w, "home.html", nil)
 }
