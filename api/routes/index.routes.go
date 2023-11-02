@@ -25,8 +25,8 @@ func HomeHandler(w http.ResponseWriter, r *http.Request) {
 func IndexHandler(w http.ResponseWriter, r *http.Request) {
 	tmpl.ExecuteTemplate(w, "login.html", nil)
 }
-
 func AboutHandler(w http.ResponseWriter, r *http.Request) {
+
 	tmpl.ExecuteTemplate(w, "about.html", nil)
 }
 
@@ -68,7 +68,7 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 			json.NewEncoder(w).Encode(map[string]string{
 				"message":     "Login correcto",
 				"x-jwt-token": tokenString,
-				"redirectTo":  "/home",
+				"redirectTo":  "/about",
 			})
 		}
 	}

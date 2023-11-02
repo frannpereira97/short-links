@@ -1,12 +1,3 @@
-$(document).ready(function () {
-    // Inicializa la tabla como un DataTable
-    $('#shorts-table').DataTable({
-        paging: false,
-        searching: false,
-        info: false,
-        ordering: false,
-    });
-});
 function crearShort() {
     // Obteniendo la URL del campo de entrada del formulario
     const urlIntroducida = document.getElementById('urlInput').value;
@@ -102,7 +93,6 @@ function fillTable(data) {
 window.onload = function() {
     listarShorts();
 };
-
 
 function logout() {
     const token = localStorage.getItem('x-jwt-token');
