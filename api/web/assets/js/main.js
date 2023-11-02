@@ -19,17 +19,18 @@ document.addEventListener("DOMContentLoaded", function() {
                 headers: {
                     "Content-Type": "application/json",
                 },
-                // Si necesitas enviar datos con tu POST, añádelos aquí. Por ejemplo:
-                body: datos
+                body: datos,
             })
-            .then(response => response.json())  // asume que el servidor responde con json
+            .then(response => response.json())
             .then(data => {
                 console.log(data);
                 if (data['x-jwt-token']) {
                     localStorage.setItem('x-jwt-token', data['x-jwt-token']);
-                }            
-                if (data.redirectTo) {
-                    window.location.href = data.redirectTo;
+
+
+                    if (data.redirectTo) {
+                        window.location.href = data.redirectTo;
+                    }
                 }
             })
             .catch(error => {

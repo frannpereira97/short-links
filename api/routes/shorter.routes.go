@@ -104,3 +104,34 @@ func ShortenURL(w http.ResponseWriter, r *http.Request) {
 	}
 
 }
+
+type ShortJSON struct {
+	ID     uint   `json:"id"`
+	Short  string `json:"short"`
+	Pagina string `json:"pagina"`
+}
+
+func GetShortsHandler(w http.ResponseWriter, r *http.Request) {
+	var shorts []models.Short
+
+	database.DB.Find(&shorts)
+
+	var shortsJSON []ShortJSON
+	for _, s := range shorts {
+
+		shortsJSON = append(shortsJSON, ShortJSON{
+			ID:     s.ID,
+			Short:  os.Getenv("DOMAIN") + "/" + s.Short,
+			Pagina: s.Pagina,
+		})
+	}
+
+	jsonResult, err := json.Marshal(shortsJSON)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	w.Write(jsonResult)
+}

@@ -19,11 +19,15 @@ type LoginRequest struct {
 var tmpl = template.Must(template.ParseGlob("web/*.html"))
 
 func HomeHandler(w http.ResponseWriter, r *http.Request) {
-	tmpl.ExecuteTemplate(w, "shorts.html", nil)
+	tmpl.ExecuteTemplate(w, "home.html", nil)
 }
 
 func IndexHandler(w http.ResponseWriter, r *http.Request) {
-	tmpl.ExecuteTemplate(w, "index.html", nil)
+	tmpl.ExecuteTemplate(w, "login.html", nil)
+}
+
+func AboutHandler(w http.ResponseWriter, r *http.Request) {
+	tmpl.ExecuteTemplate(w, "about.html", nil)
 }
 
 func LoginHandler(w http.ResponseWriter, r *http.Request) {
@@ -57,8 +61,8 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 			if err2 != nil {
 				w.WriteHeader(http.StatusBadRequest) // 400
 				w.Write([]byte(err2.Error()))
+				return
 			}
-
 			//Redirecciono
 			w.WriteHeader(http.StatusOK)
 			json.NewEncoder(w).Encode(map[string]string{
@@ -66,7 +70,6 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 				"x-jwt-token": tokenString,
 				"redirectTo":  "/home",
 			})
-			w.Header().Set("x-jwt-token", tokenString)
 		}
 	}
 }

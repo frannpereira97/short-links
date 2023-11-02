@@ -1,7 +1,6 @@
 package routes
 
 import (
-	"fmt"
 	"net/http"
 	"os"
 
@@ -20,7 +19,6 @@ func createJWT(user *models.User) (string, error) {
 		"permisos":  user.Permisos,
 	}
 
-	fmt.Println(claims)
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 
 	return token.SignedString([]byte(signingKey))

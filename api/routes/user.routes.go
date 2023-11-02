@@ -2,7 +2,6 @@ package routes
 
 import (
 	"encoding/json"
-	"fmt"
 	"net/http"
 
 	"github.com/frannpereira97/short-links/database"
@@ -75,7 +74,6 @@ func GetUserID(username string) int {
 	database.DB.Where("user_name = ?", username).First(&userID)
 
 	if userID.ID == 0 {
-		fmt.Println("no encontro el usuario")
 		return -1
 	}
 
