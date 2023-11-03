@@ -1,0 +1,7 @@
+FROM postgres:latest
+
+ENV POSTGRES_DB=shorts
+ENV POSTGRES_USER=postgres2
+ENV POSTGRES_PASSWORD=pass_Secreto
+
+EXPOSE 5432
