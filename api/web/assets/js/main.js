@@ -26,11 +26,9 @@ document.addEventListener("DOMContentLoaded", function() {
                 console.log(data);
                 if (data['x-jwt-token']) {
                     localStorage.setItem('x-jwt-token', data['x-jwt-token']);
-
-
-                    if (data.redirectTo) {
-                        window.location.href = data.redirectTo;
-                    }
+                }
+                if (data.redirectTo) {
+                    window.location.href = data.redirectTo;
                 }
             })
             .catch(error => {

@@ -29,14 +29,20 @@ function Register() {
         Domicilio: Domicilio,
     });
   
-    fetch("/users/create", {
+    fetch("/reg/create", {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
         },
         body: datos,
     })
-    .then(response => response.json())
+    .then(response => {
+        console.log(response);
+        if (!response.ok) { // Verifica si la respuesta es exitosa (código 200-299)
+            throw new Error('Network response was not ok ' + response.statusText);
+        }
+        return response.json();
+    })
     .then(data => {
         console.log(data);
         if (data['x-jwt-token']) {
@@ -47,6 +53,7 @@ function Register() {
         }
     })
     .catch(error => {
+        console.log(error);
         console.error("Error:", error);
     });
   

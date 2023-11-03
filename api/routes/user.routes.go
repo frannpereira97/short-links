@@ -2,7 +2,7 @@ package routes
 
 import (
 	"encoding/json"
-	"fmt"
+
 	"net/http"
 
 	"github.com/frannpereira97/short-links/database"
@@ -56,6 +56,7 @@ func CreateUserHandler(w http.ResponseWriter, r *http.Request) {
 	user.UserName = uData.Usuario
 	user.Password = uData.Contraseña
 	user.Email = uData.Email
+	user.Permisos = "user"
 
 	tokenString, err2 := createJWT(&user)
 	if err2 != nil {
@@ -73,7 +74,6 @@ func CreateUserHandler(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest) // 400
 		w.Write([]byte(err.Error()))
-		fmt.Println(err.Error())
 	}
 
 	//Cargo Datos
@@ -93,14 +93,13 @@ func CreateUserHandler(w http.ResponseWriter, r *http.Request) {
 	if err2 != nil {
 		w.WriteHeader(http.StatusBadRequest) // 400
 		w.Write([]byte(err2.Error()))
-		fmt.Println(err2.Error())
 	}
 
 	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(map[string]string{
 		"message":     "Login correcto",
 		"x-jwt-token": tokenString,
-		"redirectTo":  "/home",
+		"redirectTo":  "/about",
 	})
 }
 

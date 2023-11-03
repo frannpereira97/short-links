@@ -38,13 +38,12 @@ function crearShort() {
         respuesta.href = data.Short;
         respuesta.textContent = data.Short;
         respuesta.target = '_blank';
-
+        listarShorts();
     })
     .catch(error => {
         console.error('Error:', error);
         document.getElementById('respuesta').textContent = error;
     });
-    listarShorts();
 }
 
 function listarShorts() {

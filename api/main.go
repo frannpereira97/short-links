@@ -59,7 +59,7 @@ func main() {
 	//Usuarios
 	r.Handle("/users", tollbooth.LimitFuncHandler(limiter, routes.WithJWTAuth(routes.GetUsersHandler))).Methods("GET")
 	r.Handle("/users/{id}", tollbooth.LimitFuncHandler(limiter, routes.WithJWTAuth(routes.GetUserHandler))).Methods("GET")
-	r.Handle("/users/create", tollbooth.LimitFuncHandler(limiter, routes.CreateUserHandler)).Methods("POST")
+	r.Handle("/reg/create", tollbooth.LimitFuncHandler(limiter, routes.CreateUserHandler)).Methods("POST")
 	r.Handle("/users/{id}", tollbooth.LimitFuncHandler(limiter, routes.WithJWTAuth(routes.DeleteUsersHandler))).Methods("DELETE")
 
 	//Crear Short
