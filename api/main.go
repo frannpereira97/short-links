@@ -35,7 +35,6 @@ func main() {
 	database.DB.AutoMigrate(models.User{})
 
 	//Ejecuto el cron
-	routes.CronJobs()
 
 	//Cargo el router
 	r := mux.NewRouter()
@@ -53,6 +52,7 @@ func main() {
 	r.Handle("/", tollbooth.LimitFuncHandler(limiter, routes.IndexHandler)).Methods("GET")
 	//Login Request
 	r.Handle("/users/login", tollbooth.LimitFuncHandler(limiter, routes.LoginHandler)).Methods("POST")
+	r.Handle("/users/validate", tollbooth.LimitFuncHandler(limiter, routes.ValidateLoginHandler)).Methods("POST")
 	r.Handle("/users/logout", tollbooth.LimitFuncHandler(limiter, routes.LogoutHandler)).Methods("POST")
 	r.Handle("/users/register", tollbooth.LimitFuncHandler(limiter, routes.RegisterHandler)).Methods("GET")
 
@@ -79,5 +79,7 @@ func main() {
 	methodsOk := handlers.AllowedMethods([]string{"GET", "HEAD", "POST", "PUT", "OPTIONS"})
 
 	http.ListenAndServe(":4000", handlers.CORS(originsOk, headersOk, methodsOk)(r))
+
+	routes.CronJobs()
 
 }

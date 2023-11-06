@@ -7,9 +7,15 @@ services:
       - "4000:4000"
     depends_on:
       - db
+    networks:
+      - backend
   db:
     build: db
     ports:
       - "5432:5432"
     volumes:
       - .data:/data
+    networks:
+      - backend
+networks:
+  backend:

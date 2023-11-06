@@ -1,3 +1,31 @@
+document.addEventListener("DOMContentLoaded", function() {
+    const token = localStorage.getItem('x-jwt-token');
+    console.log("Token:", token);
+    if (token) {
+        fetch('/users/validate', {
+            method: 'POST', 
+            headers: {
+                'Content-Type': 'application/json',
+                'x-jwt-token': token 
+            }
+        })
+        .then(response => {
+            if (response.ok) {
+                console.log("Token validado con éxito");
+            } else {
+                // El token no es válido o ha ocurrido un error
+                window.location.href = '/';
+                throw new Error('Token no válido o error en la solicitud');
+            }
+        })
+        .catch(error => {
+            console.error('Error en la validación del token:', error);
+        });
+    } else {
+        window.location.href = '/';
+    }
+});
+
 function crearShort() {
     // Obteniendo la URL del campo de entrada del formulario
     const urlIntroducida = document.getElementById('urlInput').value;
@@ -25,9 +53,6 @@ function crearShort() {
     }
 
     let permisoIntroducido = permisosChk.checked ? "public" : "user";
-
-    console.log(expiryIntroducido, permisoIntroducido);
-
     
     const token = localStorage.getItem('x-jwt-token');
     // Datos que quieres enviar al servidor

@@ -35,6 +35,19 @@ func GetClaims(tokenH string) jwt.MapClaims {
 	return claims
 }
 
+func ValidateLoginHandler(w http.ResponseWriter, r *http.Request) {
+	tokenH := r.Header.Get("x-jwt-token")
+	valid, err := validateJWT(tokenH)
+	if err != nil || !valid.Valid {
+		w.WriteHeader(http.StatusNotFound)
+		w.Write([]byte("Token invalido"))
+		return
+	} else {
+		w.WriteHeader(http.StatusOK)
+		w.Write([]byte("Token valido"))
+	}
+}
+
 func WithJWTAuth(handlerFunc http.HandlerFunc) http.HandlerFunc {
 
 	return func(w http.ResponseWriter, r *http.Request) {
@@ -57,7 +70,6 @@ func WithJWTAuth(handlerFunc http.HandlerFunc) http.HandlerFunc {
 		//TESTING
 		var user models.User
 		database.DB.Where("user_name = ?", claims["usuario"]).First(&user)
-
 		if claims["usuario"] != user.UserName {
 			w.WriteHeader(http.StatusNotFound)
 			w.Write([]byte("No tenes permisos para acceder"))

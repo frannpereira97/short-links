@@ -23,7 +23,6 @@ document.addEventListener("DOMContentLoaded", function() {
             })
             .then(response => response.json())
             .then(data => {
-                console.log(data);
                 if (data['x-jwt-token']) {
                     localStorage.setItem('x-jwt-token', data['x-jwt-token']);
                 }

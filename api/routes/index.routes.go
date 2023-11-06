@@ -27,7 +27,13 @@ func HomeHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func IndexHandler(w http.ResponseWriter, r *http.Request) {
-	tmpl.ExecuteTemplate(w, "login.html", nil)
+	tokenH := r.Header.Get("x-jwt-token")
+	fmt.Println(tokenH)
+	if tokenH != "" {
+		tmpl.ExecuteTemplate(w, "home.html", nil)
+	} else {
+		tmpl.ExecuteTemplate(w, "login.html", nil)
+	}
 }
 func AboutHandler(w http.ResponseWriter, r *http.Request) {
 

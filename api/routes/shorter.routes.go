@@ -119,7 +119,11 @@ type ShortJSON struct {
 func GetShortsHandler(w http.ResponseWriter, r *http.Request) {
 	var shorts []models.Short
 
-	database.DB.Find(&shorts)
+	tokenH := r.Header.Get("x-jwt-token")
+	claims := GetClaims(tokenH)
+	userId := GetUserID(claims["usuario"].(string))
+
+	database.DB.Where("permisos = ? OR user_id = ?", "public", userId).Find(&shorts)
 
 	var shortsJSON []ShortJSON
 	for _, s := range shorts {
