@@ -34,6 +34,10 @@ func main() {
 	database.DB.AutoMigrate(models.Datos{})
 	database.DB.AutoMigrate(models.User{})
 
+	//Ejecuto el cron
+	routes.CronJobs()
+
+	//Cargo el router
 	r := mux.NewRouter()
 
 	//Cargo los archivos para que corra el front

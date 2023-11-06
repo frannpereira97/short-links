@@ -3,15 +3,41 @@ function crearShort() {
     const urlIntroducida = document.getElementById('urlInput').value;
 
     const shortIntroducido = document.getElementById('shortInput').value;
+
+    var expire1D = document.getElementById('expire1D');
+    var expire1W = document.getElementById('expire1W');
+    var expireNever = document.getElementById('expireNever');
+    var permisosChk = document.getElementById('permisosChk');
+
+    const dateNow = new Date();
+    const dateN = new Date();
+    
+
+    let expiryIntroducido = 0;
+    if(expire1D.checked){
+        dateNow.setDate(dateNow.getDate() + 1);
+        expiryIntroducido = dateNow.toISOString();
+    }else if(expire1W.checked){
+        dateNow.setDate(dateNow.getDate() + 7);
+        expiryIntroducido = dateNow.toISOString();
+    }else if(expireNever.checked){
+        expiryIntroducido = 0;
+    }
+
+    let permisoIntroducido = permisosChk.checked ? "public" : "user";
+
+    console.log(expiryIntroducido, permisoIntroducido);
+
     
     const token = localStorage.getItem('x-jwt-token');
     // Datos que quieres enviar al servidor
     const datos = JSON.stringify({
         Pagina: urlIntroducida,
         Short: shortIntroducido,
-        Expiry: 30,
-        FechaCreaion:'',
+        Expiry: expiryIntroducido,
+        fecha_creacion: dateN,
         Abierto:'',
+        Permisos: permisoIntroducido,
         UserID: 1,        
     });
 

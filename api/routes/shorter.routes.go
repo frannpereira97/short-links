@@ -2,14 +2,18 @@ package routes
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"os"
+	"time"
 
 	"github.com/asaskevich/govalidator"
 	"github.com/frannpereira97/short-links/database"
 	"github.com/frannpereira97/short-links/models"
+	"github.com/go-co-op/gocron"
 	"github.com/google/uuid"
 	"github.com/gorilla/mux"
+	"gorm.io/gorm"
 )
 
 func ResolveURL(w http.ResponseWriter, r *http.Request) {
@@ -88,6 +92,8 @@ func ShortenURL(w http.ResponseWriter, r *http.Request) {
 		short.Short = newShort
 
 		short.UserID = user.ID
+		fmt.Println(short.Expiry, short.Permisos)
+
 		createdShort := database.DB.Create(&short)
 
 		err := createdShort.Error
@@ -133,4 +139,25 @@ func GetShortsHandler(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", "application/json")
 	w.Write(jsonResult)
+}
+
+func ExpiredShorts(db *gorm.DB) error {
+	var shorts models.Short
+	result := db.Where("expiry < ?", time.Now()).Delete(&shorts)
+	if result.Error != nil {
+
+		return result.Error
+	}
+	// Opcional: Puedes usar result.RowsAffected para saber cuántas filas se han eliminado
+	return nil
+}
+
+func CronJobs() {
+	s := gocron.NewScheduler(time.UTC)
+
+	// 4
+	s.Every(1).Days().Do(ExpiredShorts, database.DB)
+
+	// 5
+	s.StartBlocking()
 }

@@ -204,8 +204,8 @@
 
 <div class="container-fluid">
   <div class="row">
-    <div class="sidebar border border-right col-md-3 col-lg-2 p-0 bg-body-tertiary">
-      <div class="offcanvas-md offcanvas-end bg-body-tertiary" tabindex="-1" id="sidebarMenu" aria-labelledby="sidebarMenuLabel">
+    <div class="sidebar border border-right col-md-3 col-lg-2 p-0 bg-body-tertiary vh-100">
+      <div class="offcanvas-md offcanvas-end bg-body-tertiary " tabindex="-1" id="sidebarMenu" aria-labelledby="sidebarMenuLabel">
         <div class="offcanvas-header">
           <h5 class="offcanvas-title" id="sidebarMenuLabel">Shorts</h5>
           <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#sidebarMenu" aria-label="Close"></button>
@@ -272,11 +272,37 @@
               Valid short is required.
             </div>
           </div>
+          <div class="col-sm-6">
+            <div class="form-check form-check-inline">
+              <input class="form-check-input" type="radio" name="inlineRadioOptions" id="expire1D" value="24">
+              <label class="form-check-label" for="inlineRadio1">1 Dia</label>
+            </div>
+            <div class="form-check form-check-inline">
+              <input class="form-check-input" type="radio" name="inlineRadioOptions" id="expire1W" value="168">
+              <label class="form-check-label" for="inlineRadio2">1 Semana</label>
+            </div>
+            <div class="form-check form-check-inline">
+              <input class="form-check-input" type="radio" name="inlineRadioOptions" id="expireNever" value="0">
+              <label class="form-check-label" for="inlineRadio3">No expira</label>
+            </div>
+            <div class="invalid-feedback">
+              Valid expiration is required.
+            </div>
+          </div>
+          <div class="col-sm-6">
+            <div class="form-check form-switch">
+              <input class="form-check-input" type="checkbox" id="permisosChk" value="user" checked>
+              <label class="form-check-label" for="permisosChk">Compartir</label>
+            </div>
+            <div class="invalid-feedback">
+              Valid expiration is required.
+            </div>
+          </div>
           <div class="col-12">
-            <button class="btn btn-primary" onclick="crearShort()">Crear Short</button>
+            <button class="btn btn-primary" onclick="crearShort()">Create</button>
           </div>
           <div class="col-sm-6" hidden id="respuestaShort"> 
-            <p>El link corto es:</p>
+            <p>Short LINK:</p>
             <ul>
                 <li><a id="respuesta"></a></li>
             </ul>
