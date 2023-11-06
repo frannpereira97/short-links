@@ -2,7 +2,6 @@ package routes
 
 import (
 	"encoding/json"
-	"fmt"
 	"net/http"
 	"os"
 	"time"
@@ -92,7 +91,6 @@ func ShortenURL(w http.ResponseWriter, r *http.Request) {
 		short.Short = newShort
 
 		short.UserID = user.ID
-		fmt.Println(short.Expiry, short.Permisos)
 
 		createdShort := database.DB.Create(&short)
 

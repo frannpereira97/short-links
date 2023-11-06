@@ -2,7 +2,6 @@ package routes
 
 import (
 	"encoding/json"
-	"fmt"
 	"html/template"
 	"net/http"
 
@@ -27,13 +26,7 @@ func HomeHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func IndexHandler(w http.ResponseWriter, r *http.Request) {
-	tokenH := r.Header.Get("x-jwt-token")
-	fmt.Println(tokenH)
-	if tokenH != "" {
-		tmpl.ExecuteTemplate(w, "home.html", nil)
-	} else {
-		tmpl.ExecuteTemplate(w, "login.html", nil)
-	}
+	tmpl.ExecuteTemplate(w, "login.html", nil)
 }
 func AboutHandler(w http.ResponseWriter, r *http.Request) {
 
@@ -86,7 +79,6 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 
 func LogoutHandler(w http.ResponseWriter, r *http.Request) {
 	// Eliminar token
-	fmt.Println("Logout correcto")
 	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(map[string]string{
 		"message":    "Logout correcto",
