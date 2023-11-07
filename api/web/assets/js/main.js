@@ -5,34 +5,35 @@ document.addEventListener("DOMContentLoaded", function() {
 
         const loginButton = document.getElementById("loginButton");
 
-        const UserName = document.getElementById("floatingInput").value;
-        const Password = document.getElementById("floatingPassword").value;
+        let UserName = document.getElementById("floatingInput").value;
+        let Password = document.getElementById("floatingPassword").value;
+        let alertJS = document.getElementById("alertJS");
 
-        const datos = JSON.stringify({
+        let datos = JSON.stringify({
             UserName: UserName,
             Password: Password,
         });
 
-        loginButton.addEventListener("click", function() {
-            fetch("/users/login", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: datos,
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data['x-jwt-token']) {
-                    localStorage.setItem('x-jwt-token', data['x-jwt-token']);
-                }
-                if (data.redirectTo) {
-                    window.location.href = data.redirectTo;
-                }
-            })
-            .catch(error => {
-                console.error("Error:", error);
-            });
+        fetch("/users/login", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: datos,
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data['x-jwt-token']) {
+                localStorage.setItem('x-jwt-token', data['x-jwt-token']);
+            }
+            if (data.redirectTo) {
+                window.location.href = data.redirectTo;
+            }
+        })
+        .catch(error => {
+            console.log("error");
+            alertJS.hidden = false;
+            console.error("Error:", error);
         });
     });
 });

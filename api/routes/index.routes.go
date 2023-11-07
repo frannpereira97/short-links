@@ -38,15 +38,15 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 	//Almaceno en JSON los datos de log
 	if err := json.NewDecoder(r.Body).Decode(&login); err != nil {
 		w.WriteHeader(http.StatusBadRequest)
-		w.Write([]byte(err.Error()))
+		http.Error(w, "Error", http.StatusBadRequest)
 		return
 	}
 	//Obtengo el ID
 	username := GetUserID(login.UserName)
 	//Si no existe el usuario
 	if username == -1 {
-		w.WriteHeader(http.StatusNotFound)
-		w.Write([]byte("Usuario no encontrado"))
+		http.Error(w, "Error", http.StatusBadRequest)
+		w.WriteHeader(http.StatusBadRequest)
 		return
 	} else if username != -1 {
 		//Obtengo la contraseña
@@ -56,14 +56,14 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 		chk := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(login.Password))
 		if chk != nil {
 			w.WriteHeader(http.StatusBadRequest)
-			w.Write([]byte("Contraseña incorrecta"))
+			http.Error(w, "Error", http.StatusBadRequest)
 			return
 		} else {
 			//Creo la sesion - Asigno token
 			tokenString, err2 := createJWT(&user)
 			if err2 != nil {
 				w.WriteHeader(http.StatusBadRequest) // 400
-				w.Write([]byte(err2.Error()))
+				http.Error(w, "Error", http.StatusBadRequest)
 				return
 			}
 			//Redirecciono
