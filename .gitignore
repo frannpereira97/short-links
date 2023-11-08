@@ -1,4 +1,6 @@
 .tmp/
 .data/
-.air
+.air.toml
 .env
+.env.local
+.idea-drawio
