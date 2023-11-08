@@ -126,21 +126,101 @@ function fillTable(data) {
         var cell1 = row.insertCell(0);
         var cell2 = row.insertCell(1);
         var cell3 = row.insertCell(2);
-        cell1.textContent = item.id;
+        var cell4 = row.insertCell(3);
 
+        cell1.textContent = item.fecha_creacion;
+        var edit = document.createElement("button");
+        edit.addEventListener("click", function() {
+            var shortLinkInput = document.getElementById("short-link");
+            shortLinkInput.value = item.short;
+        });
+        edit.dataset.toggle = "modal";
+        edit.dataset.target = "#shortModal";
+        edit.textContent = 'Edit';   
+
+        var Del = document.createElement("button");
+        Del.addEventListener("click", function() {
+            deleteShort(item.short);
+        });
+        Del.textContent = 'Del';
+
+        cell1.appendChild(edit);
+        cell1.appendChild(Del);
+
+        cell2.textContent = item.id;
         var link = document.createElement("a");
         link.href = item.short;
         link.textContent = item.short;
         link.target = '_blank';
 
-        cell2.appendChild(link);
-        cell3.textContent = item.pagina;
+        cell3.appendChild(link);
+        cell4.textContent = item.pagina;
     });
 }
 
 window.onload = function() {
     listarShorts();
 };
+
+function editShort() {
+    const shortLink = document.getElementById("short-link").value;
+    const newLink = document.getElementById("new-short").value;
+    const modal = document.getElementById("shortModal");
+
+    const short = shortLink.slice(-6);
+
+    const token = localStorage.getItem('x-jwt-token');
+
+    const datos = JSON.stringify({
+        Short: short,
+        NewShort: newLink
+    });
+    fetch('/shorts/edit', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'x-jwt-token': token,
+        },
+        body: datos
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Error en la red o en el servidor');
+        }
+        $(modal).modal('hide');
+        listarShorts();
+        
+        
+    })
+
+    
+}
+
+function deleteShort(short) {
+    const token = localStorage.getItem('x-jwt-token');
+    const shorter = short.slice(-6);
+
+    const datos = JSON.stringify({
+        Short: shorter,
+        NewShort: shorter
+    });
+    console.log(datos);
+
+    fetch('/shorts/delete', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'x-jwt-token': token,
+        },
+        body: datos
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Error en la red o en el servidor');
+        }
+        listarShorts();
+    })
+}
 
 function logout() {
     const token = localStorage.getItem('x-jwt-token');

@@ -9,7 +9,6 @@ WORKDIR /build
 RUN go build -o main .
 
 #Correr docker
-
 FROM alpine
 
 RUN adduser -S -D -H -h /app appuser

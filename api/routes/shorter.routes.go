@@ -143,6 +143,45 @@ func GetShortsHandler(w http.ResponseWriter, r *http.Request) {
 	w.Write(jsonResult)
 }
 
+type ShortEditJSON struct {
+	Short    string `json:"short"`
+	NewShort string `json:"newShort"`
+}
+
+func EditShortHandler(w http.ResponseWriter, r *http.Request) {
+	var short models.Short
+	var shortEdit ShortEditJSON
+
+	json.NewDecoder(r.Body).Decode(&shortEdit)
+	database.DB.Where("short = ?", shortEdit.Short).First(&short)
+	if short.ID == 0 {
+		w.WriteHeader(http.StatusNotFound)
+		w.Write([]byte("Short no encontrado"))
+		w.Write([]byte(short.Short))
+		return
+	}
+	short.Short = shortEdit.NewShort
+	database.DB.Save(&short)
+
+	json.NewEncoder(w).Encode(&short)
+}
+
+func DeleteShortHandler(w http.ResponseWriter, r *http.Request) {
+	var short models.Short
+	var shortEdit ShortEditJSON
+	json.NewDecoder(r.Body).Decode(&shortEdit)
+
+	database.DB.Where("short = ?", shortEdit.Short).First(&short)
+	if short.ID == 0 {
+		w.WriteHeader(http.StatusNotFound)
+		w.Write([]byte("Short no encontrado"))
+		w.Write([]byte(short.Short))
+		return
+	}
+	database.DB.Delete(&short)
+	w.Write([]byte("Short eliminado"))
+}
+
 func ExpiredShorts(db *gorm.DB) error {
 	var shorts models.Short
 	result := db.Where("expiry < ?", time.Now()).Delete(&shorts)

@@ -2,7 +2,6 @@ package routes
 
 import (
 	"encoding/json"
-	"fmt"
 
 	"net/http"
 
@@ -164,7 +163,6 @@ func ChangePasswordHandler(w http.ResponseWriter, r *http.Request) {
 	json.NewDecoder(r.Body).Decode(&passEdit)
 	chk := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(passEdit.Password))
 	if chk != nil {
-		fmt.Println("Contraseña incorrecta")
 		w.WriteHeader(http.StatusBadRequest)
 		http.Error(w, "Error", http.StatusBadRequest)
 		return
@@ -268,7 +266,6 @@ func GetUserDataHandler(w http.ResponseWriter, r *http.Request) {
 	uData.Provincia = datos.Provincia
 	uData.Ciudad = datos.Ciudad
 	uData.Domicilio = datos.Domicilio
-	fmt.Println(uData)
 	json.NewEncoder(w).Encode(&uData)
 }
 

@@ -317,6 +317,7 @@
         <table class="table table-striped" id="shorts-table" >
           <thead>
             <tr>
+              <th scope="col">Acciones</th>
               <th scope="col">#</th>
               <th scope="col">Short Link</th>
               <th scope="col">Link Largo</th>
@@ -332,5 +333,42 @@
 <script src="/assets/dist/js/bootstrap.bundle.min.js"></script>
 <script src="/assets/js/short.js"></script>
 
+<!-- USER Modal -->
+<div class="modal fade" id="shortModal">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <!-- Modal Header -->
+      <div class="modal-header">
+        <h4 class="modal-title">Editar Short</h4>
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+      </div>
+      <!-- Modal body -->
+      <div class="modal-body">
+          <div class="form-group">
+              <label for="short-link">Short Link Actual:</label>
+              <input type="text" readonly="readonly" class="form-control" id="short-link">
+          </div>
+          <div class="form-group">
+              <label for="new-short">Nuevo short</label>
+              <input type="text" maxlength="6" class="form-control" id="new-short">
+          </div>
+          <div>
+              <button type="submit" onclick="editShort()" data-dismiss="modal" class="btn btn-primary">Cambiar Short</button>
+          </div>
+      </div>
+      <!-- Modal footer -->
+      <div class="modal-footer">
+        <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
+
 </body>
 </html>
+
+

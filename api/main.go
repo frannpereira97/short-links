@@ -66,7 +66,7 @@ func main() {
 
 	//Usuarios
 	r.Handle("/users/changedata", tollbooth.LimitFuncHandler(limiter, routes.WithJWTAuth(routes.ChangeDataHandler))).Methods("POST")
-	r.Handle("/users/changepw", tollbooth.LimitFuncHandler(limiter, routes.ChangePasswordHandler)).Methods("POST")
+	r.Handle("/users/changepw", tollbooth.LimitFuncHandler(limiter, routes.WithJWTAuth(routes.ChangePasswordHandler))).Methods("POST")
 	r.Handle("/users/list", tollbooth.LimitFuncHandler(limiter, routes.WithJWTAuth(routes.GetUsersHandler))).Methods("GET")
 	r.Handle("/users/data", tollbooth.LimitFuncHandler(limiter, routes.WithJWTAuth(routes.GetUserDataHandler))).Methods("GET")
 
@@ -80,6 +80,8 @@ func main() {
 
 	//Listar todos los Short y enviarlos
 	r.Handle("/shorts/list", tollbooth.LimitFuncHandler(limiter, routes.WithJWTAuth(routes.GetShortsHandler))).Methods("GET")
+	r.Handle("/shorts/edit", tollbooth.LimitFuncHandler(limiter, routes.WithJWTAuth(routes.EditShortHandler))).Methods("POST")
+	r.Handle("/shorts/delete", tollbooth.LimitFuncHandler(limiter, routes.WithJWTAuth(routes.DeleteShortHandler))).Methods("POST")
 
 	//CORS
 	headersOk := handlers.AllowedHeaders([]string{"X-Requested-With", "Content-Type", "x-jwt-token"})
