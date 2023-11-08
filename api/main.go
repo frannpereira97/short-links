@@ -65,13 +65,16 @@ func main() {
 	r.Handle("/{url}", tollbooth.LimitFuncHandler(limiter, routes.ResolveURL)).Methods("GET")
 
 	//Usuarios
+	r.Handle("/users/changedata", tollbooth.LimitFuncHandler(limiter, routes.WithJWTAuth(routes.ChangeDataHandler))).Methods("POST")
 	r.Handle("/users/changepw", tollbooth.LimitFuncHandler(limiter, routes.ChangePasswordHandler)).Methods("POST")
 	r.Handle("/users/list", tollbooth.LimitFuncHandler(limiter, routes.WithJWTAuth(routes.GetUsersHandler))).Methods("GET")
 	r.Handle("/users/data", tollbooth.LimitFuncHandler(limiter, routes.WithJWTAuth(routes.GetUserDataHandler))).Methods("GET")
-	r.Handle("/users/{id}", tollbooth.LimitFuncHandler(limiter, routes.WithJWTAuth(routes.GetUserHandler))).Methods("GET")
-	r.Handle("/users/create", tollbooth.LimitFuncHandler(limiter, routes.CreateUserHandler)).Methods("POST")
-	r.Handle("/users/{id}", tollbooth.LimitFuncHandler(limiter, routes.WithJWTAuth(routes.DeleteUsersHandler))).Methods("DELETE")
 
+	r.Handle("/users/create", tollbooth.LimitFuncHandler(limiter, routes.CreateUserHandler)).Methods("POST")
+
+	//Revisar
+	r.Handle("/users/{id}", tollbooth.LimitFuncHandler(limiter, routes.WithJWTAuth(routes.DeleteUsersHandler))).Methods("DELETE")
+	r.Handle("/users/{id}", tollbooth.LimitFuncHandler(limiter, routes.WithJWTAuth(routes.GetUserHandler))).Methods("GET")
 	//Crear Short
 	r.Handle("/users/Shorten", tollbooth.LimitFuncHandler(limiter, routes.WithJWTAuth(routes.ShortenURL))).Methods("POST")
 

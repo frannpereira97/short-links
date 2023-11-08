@@ -37,6 +37,12 @@ type PermisosResponse struct {
 	Admin    bool   `json:"admin"`
 }
 
+type PassEdit struct {
+	Password string `json:"password"`
+	NewPass  string `json:"newPass"`
+	VnewPass string `json:"vnewPass"`
+}
+
 func GetUserHandler(w http.ResponseWriter, r *http.Request) {
 	var users []models.User
 	database.DB.Find(&users)
@@ -144,18 +150,11 @@ func CreateUserHandler(w http.ResponseWriter, r *http.Request) {
 	})
 }
 
-type PassEdit struct {
-	Password string `json:"password"`
-	NewPass  string `json:"newPass"`
-	VnewPass string `json:"vnewPass"`
-}
-
 func ChangePasswordHandler(w http.ResponseWriter, r *http.Request) {
 	var passEdit PassEdit
 	var user models.User
 	token := r.Header.Get("x-jwt-token")
 	claims := GetClaims(token)
-	fmt.Println(claims)
 	database.DB.Where("user_name = ?", claims["usuario"]).First(&user)
 	if user.ID == 0 {
 		w.WriteHeader(http.StatusNotFound)
@@ -199,6 +198,30 @@ func hashPW(password string) (string, error) {
 		return "no funciona", err3
 	}
 	return string(encpw), nil
+}
+
+func ChangeDataHandler(w http.ResponseWriter, r *http.Request) {
+	var datos models.Datos
+	var user models.User
+	var uData userData
+	token := r.Header.Get("x-jwt-token")
+	claims := GetClaims(token)
+	id := GetUserID(claims["usuario"].(string))
+	json.NewDecoder(r.Body).Decode(&uData)
+	database.DB.Model(&datos).Where("user_id = ?", id).Updates(models.Datos{
+		Nombre:       uData.Nombre,
+		Apellido:     uData.Apellido,
+		Sexo:         uData.Sexo,
+		Nacionalidad: uData.Nacionalidad,
+		Provincia:    uData.Provincia,
+		Ciudad:       uData.Ciudad,
+		Domicilio:    uData.Domicilio,
+	})
+
+	database.DB.Model(&user).Where("id = ?", id).Updates(models.User{
+		Email: uData.Email,
+	})
+	w.WriteHeader(http.StatusOK)
 }
 
 func GetUserID(username string) int {

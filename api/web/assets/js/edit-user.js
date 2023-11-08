@@ -78,7 +78,6 @@ function getDatosUser() {
     })
     .then(response => response.json())
     .then(data => {
-        console.log(data);
         fillUserData(data);
     })
     .catch(error => {
@@ -161,4 +160,45 @@ function changePW() {
     }
     
 
+}
+
+function cambiarDatos() {
+    const nombre = document.getElementById("modal_nombre")
+    const apellido = document.getElementById("modal_apellido")
+    const email = document.getElementById("modal_email")
+    const sexo = document.getElementById("modal_sexo")
+    const nacionalidad = document.getElementById("modal_nacionalidad")
+    const provincia = document.getElementById("modal_provincia")
+    const ciudad = document.getElementById("modal_ciudad")
+    const domicilio = document.getElementById("modal_domicilio")
+
+    const token = localStorage.getItem('x-jwt-token');
+
+    const datos = JSON.stringify({
+        nombre: nombre.value,
+        apellido: apellido.value,
+        email: email.value,
+        sexo: sexo.value,
+        nacionalidad: nacionalidad.value,
+        provincia: provincia.value,
+        ciudad: ciudad.value,
+        Domicilio: domicilio.value,
+    });
+
+    fetch('/users/changedata', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'x-jwt-token': token,
+        },
+        body: datos
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Error en la red o en el servidor');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+    });
 }
