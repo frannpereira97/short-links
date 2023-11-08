@@ -2,6 +2,7 @@ package routes
 
 import (
 	"encoding/json"
+	"fmt"
 
 	"net/http"
 
@@ -11,25 +12,11 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
-func GetUsersHandler(w http.ResponseWriter, r *http.Request) {
-	var users []models.User
-	database.DB.Find(&users)
-	json.NewEncoder(w).Encode(&users)
-}
-
-func GetUserHandler(w http.ResponseWriter, r *http.Request) {
-	params := mux.Vars(r)
-	var user models.User
-	database.DB.First(&user, params["id"])
-
-	if user.ID == 0 {
-		w.WriteHeader(http.StatusNotFound)
-		w.Write([]byte("Usuario no encontrado"))
-		return
-
-	}
-	json.NewEncoder(w).Encode(&user)
-
+type ShortUser struct {
+	ID       uint   `json:"id"`
+	Username string `json:"username"`
+	Permisos string `json:"permisos"`
+	Admin    bool   `json:"admin"`
 }
 
 type userData struct {
@@ -43,6 +30,60 @@ type userData struct {
 	Provincia    string `json:"provincia"`
 	Ciudad       string `json:"ciudad"`
 	Domicilio    string `json:"Domicilio"`
+}
+
+type PermisosResponse struct {
+	Permisos string `json:"permisos"`
+	Admin    bool   `json:"admin"`
+}
+
+func GetUserHandler(w http.ResponseWriter, r *http.Request) {
+	var users []models.User
+	database.DB.Find(&users)
+	json.NewEncoder(w).Encode(&users)
+}
+
+func GetUsersHandler(w http.ResponseWriter, r *http.Request) {
+	var user []models.User
+	var shorterUser []ShortUser
+
+	tokenH := r.Header.Get("x-jwt-token")
+	claims := GetClaims(tokenH)
+	permisos := claims["permisos"].(string)
+	if permisos == "admin" {
+		database.DB.Find(&user)
+		for _, s := range user {
+
+			shorterUser = append(shorterUser, ShortUser{
+				ID:       s.ID,
+				Username: s.UserName,
+				Permisos: s.Permisos,
+				Admin:    true,
+			})
+		}
+		jsonResult, err := json.Marshal(shorterUser)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+		w.Header().Set("Content-Type", "application/json")
+		w.Write(jsonResult)
+	} else if permisos == "user" {
+		permisos := PermisosResponse{
+			Permisos: "user",
+			Admin:    false,
+		}
+		jsonPermisos, err := json.Marshal(permisos)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+		w.Header().Set("Content-Type", "application/json")
+		w.Write(jsonPermisos)
+	} else {
+		w.WriteHeader(http.StatusUnauthorized)
+		w.Write([]byte("No tiene permisos para acceder a esta pagina"))
+	}
 }
 
 func CreateUserHandler(w http.ResponseWriter, r *http.Request) {
@@ -103,6 +144,53 @@ func CreateUserHandler(w http.ResponseWriter, r *http.Request) {
 	})
 }
 
+type PassEdit struct {
+	Password string `json:"password"`
+	NewPass  string `json:"newPass"`
+	VnewPass string `json:"vnewPass"`
+}
+
+func ChangePasswordHandler(w http.ResponseWriter, r *http.Request) {
+	var passEdit PassEdit
+	var user models.User
+	token := r.Header.Get("x-jwt-token")
+	claims := GetClaims(token)
+	fmt.Println(claims)
+	database.DB.Where("user_name = ?", claims["usuario"]).First(&user)
+	if user.ID == 0 {
+		w.WriteHeader(http.StatusNotFound)
+		w.Write([]byte("Usuario no encontrado"))
+		return
+	}
+	json.NewDecoder(r.Body).Decode(&passEdit)
+	chk := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(passEdit.Password))
+	if chk != nil {
+		fmt.Println("Contraseña incorrecta")
+		w.WriteHeader(http.StatusBadRequest)
+		http.Error(w, "Error", http.StatusBadRequest)
+		return
+	} else {
+		if passEdit.NewPass != passEdit.VnewPass {
+			w.WriteHeader(http.StatusBadRequest)
+			http.Error(w, "Error", http.StatusBadRequest)
+			return
+		} else {
+
+			newPW, err2 := hashPW(passEdit.NewPass)
+			if err2 != nil {
+				w.WriteHeader(http.StatusBadRequest) // 400
+				w.Write([]byte(err2.Error()))
+			}
+			user.Password = newPW
+			database.DB.Model(&user).Where("user_name = ?", user.UserName).Update("password", user.Password)
+			w.WriteHeader(http.StatusOK)
+			json.NewEncoder(w).Encode(map[string]string{
+				"message": "Contraseña cambiada correctamente",
+			})
+		}
+	}
+}
+
 func hashPW(password string) (string, error) {
 
 	encpw, err3 := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
@@ -126,7 +214,39 @@ func GetUserID(username string) int {
 	id := userID.ID
 
 	return int(id)
+}
 
+func GetUserDataHandler(w http.ResponseWriter, r *http.Request) {
+	var datos models.Datos
+	var user models.User
+	var uData userData
+
+	token := r.Header.Get("x-jwt-token")
+	claims := GetClaims(token)
+	id := GetUserID(claims["usuario"].(string))
+	database.DB.Where("user_id = ?", id).First(&datos)
+	if datos.ID == 0 {
+		w.WriteHeader(http.StatusNotFound)
+		w.Write([]byte("Usuario no encontrado"))
+		return
+	}
+	database.DB.Where("id = ?", id).First(&user)
+	if user.ID == 0 {
+		w.WriteHeader(http.StatusNotFound)
+		w.Write([]byte("Usuario no encontrado"))
+		return
+	}
+	uData.Nombre = datos.Nombre
+	uData.Apellido = datos.Apellido
+	uData.Usuario = user.UserName
+	uData.Email = user.Email
+	uData.Sexo = datos.Sexo
+	uData.Nacionalidad = datos.Nacionalidad
+	uData.Provincia = datos.Provincia
+	uData.Ciudad = datos.Ciudad
+	uData.Domicilio = datos.Domicilio
+	fmt.Println(uData)
+	json.NewEncoder(w).Encode(&uData)
 }
 
 func DeleteUsersHandler(w http.ResponseWriter, r *http.Request) {
@@ -141,5 +261,4 @@ func DeleteUsersHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	database.DB.Unscoped().Delete(&user)
-
 }

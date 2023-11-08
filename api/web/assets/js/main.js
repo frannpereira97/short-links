@@ -31,7 +31,6 @@ document.addEventListener("DOMContentLoaded", function() {
             }
         })
         .catch(error => {
-            console.log("error");
             alertJS.hidden = false;
             console.error("Error:", error);
         });

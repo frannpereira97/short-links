@@ -29,8 +29,11 @@ func IndexHandler(w http.ResponseWriter, r *http.Request) {
 	tmpl.ExecuteTemplate(w, "login.html", nil)
 }
 func AboutHandler(w http.ResponseWriter, r *http.Request) {
-
 	tmpl.ExecuteTemplate(w, "about.html", nil)
+}
+
+func UserEditHandler(w http.ResponseWriter, r *http.Request) {
+	tmpl.ExecuteTemplate(w, "users.html", nil)
 }
 
 func LoginHandler(w http.ResponseWriter, r *http.Request) {

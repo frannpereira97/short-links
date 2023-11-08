@@ -48,28 +48,33 @@ func main() {
 	limiter.SetMessage("Has alcanzado el limite de solicitudes.")
 	limiter.SetMessageContentType("application/json; charset=utf-8")
 
-	// Index
-	r.Handle("/", tollbooth.LimitFuncHandler(limiter, routes.IndexHandler)).Methods("GET")
-	//Login Request
+	//Login/Logout Request
 	r.Handle("/users/login", tollbooth.LimitFuncHandler(limiter, routes.LoginHandler)).Methods("POST")
 	r.Handle("/users/validate", tollbooth.LimitFuncHandler(limiter, routes.ValidateLoginHandler)).Methods("POST")
 	r.Handle("/users/logout", tollbooth.LimitFuncHandler(limiter, routes.LogoutHandler)).Methods("POST")
-	r.Handle("/users/register", tollbooth.LimitFuncHandler(limiter, routes.RegisterHandler)).Methods("GET")
 
-	//Home with short links
+	r.Handle("/users/edit", tollbooth.LimitFuncHandler(limiter, routes.UserEditHandler)).Methods("GET")
+
+	//Cargan Paginas
+	r.Handle("/", tollbooth.LimitFuncHandler(limiter, routes.IndexHandler)).Methods("GET")
 	r.Handle("/home", tollbooth.LimitFuncHandler(limiter, routes.HomeHandler)).Methods("GET")
 	r.Handle("/about", tollbooth.LimitFuncHandler(limiter, routes.AboutHandler)).Methods("GET")
+	r.Handle("/users/register", tollbooth.LimitFuncHandler(limiter, routes.RegisterHandler)).Methods("GET")
+
+	//Redirigir a la direccion del Short
+	r.Handle("/{url}", tollbooth.LimitFuncHandler(limiter, routes.ResolveURL)).Methods("GET")
 
 	//Usuarios
-	r.Handle("/users", tollbooth.LimitFuncHandler(limiter, routes.WithJWTAuth(routes.GetUsersHandler))).Methods("GET")
+	r.Handle("/users/changepw", tollbooth.LimitFuncHandler(limiter, routes.ChangePasswordHandler)).Methods("POST")
+	r.Handle("/users/list", tollbooth.LimitFuncHandler(limiter, routes.WithJWTAuth(routes.GetUsersHandler))).Methods("GET")
+	r.Handle("/users/data", tollbooth.LimitFuncHandler(limiter, routes.WithJWTAuth(routes.GetUserDataHandler))).Methods("GET")
 	r.Handle("/users/{id}", tollbooth.LimitFuncHandler(limiter, routes.WithJWTAuth(routes.GetUserHandler))).Methods("GET")
-	r.Handle("/reg/create", tollbooth.LimitFuncHandler(limiter, routes.CreateUserHandler)).Methods("POST")
+	r.Handle("/users/create", tollbooth.LimitFuncHandler(limiter, routes.CreateUserHandler)).Methods("POST")
 	r.Handle("/users/{id}", tollbooth.LimitFuncHandler(limiter, routes.WithJWTAuth(routes.DeleteUsersHandler))).Methods("DELETE")
 
 	//Crear Short
 	r.Handle("/users/Shorten", tollbooth.LimitFuncHandler(limiter, routes.WithJWTAuth(routes.ShortenURL))).Methods("POST")
-	//Redirigir a la direccion del Short
-	r.Handle("/{url}", tollbooth.LimitFuncHandler(limiter, routes.ResolveURL)).Methods("GET")
+
 	//Listar todos los Short y enviarlos
 	r.Handle("/shorts/list", tollbooth.LimitFuncHandler(limiter, routes.WithJWTAuth(routes.GetShortsHandler))).Methods("GET")
 

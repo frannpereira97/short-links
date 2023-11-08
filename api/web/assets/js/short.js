@@ -1,6 +1,5 @@
 document.addEventListener("DOMContentLoaded", function() {
     const token = localStorage.getItem('x-jwt-token');
-    console.log("Token:", token);
     if (token) {
         fetch('/users/validate', {
             method: 'POST', 
@@ -11,7 +10,6 @@ document.addEventListener("DOMContentLoaded", function() {
         })
         .then(response => {
             if (response.ok) {
-                console.log("Token validado con éxito");
             } else {
                 // El token no es válido o ha ocurrido un error
                 window.location.href = '/';

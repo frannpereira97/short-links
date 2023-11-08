@@ -29,7 +29,7 @@ function Register() {
         Domicilio: Domicilio,
     });
   
-    fetch("/reg/create", {
+    fetch("/users/create", {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
@@ -37,14 +37,12 @@ function Register() {
         body: datos,
     })
     .then(response => {
-        console.log(response);
         if (!response.ok) { // Verifica si la respuesta es exitosa (código 200-299)
             throw new Error('Network response was not ok ' + response.statusText);
         }
         return response.json();
     })
     .then(data => {
-        console.log(data);
         if (data['x-jwt-token']) {
             localStorage.setItem('x-jwt-token', data['x-jwt-token']);
         }
@@ -53,7 +51,6 @@ function Register() {
         }
     })
     .catch(error => {
-        console.log(error);
         console.error("Error:", error);
     });
   
