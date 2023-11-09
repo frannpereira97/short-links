@@ -46,11 +46,11 @@ localhost:4000/
 Para realizar la instalacion mediante Docker podemos optar por unicamente correr la aplicacion dirigiendonos hacia la carpeta **.short-links/api** y corriendo el contenedor con el siguiente comando:
 ```
 docker run -e DB_ADDR="" \
-           -e DB_PORT="5432" \
+           -e DB_PORT="" \
            -e DB_PASS="" \
-           -e DB_USER="postgres" \
-           -e DB_NAME="shorts" \
-           -e DOMAIN="http://localhost:4000" \
+           -e DB_USER="" \
+           -e DB_NAME="" \
+           -e DOMAIN="" \
            --name nombre_contenedor \
            imagen_docker
 ```
