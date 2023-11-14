@@ -1,0 +1,3 @@
+[submodule "short-ui"]
+	path = short-ui
+	url = https://github.com/frannpereira97/short-ui.git
