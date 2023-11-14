@@ -1,0 +1,19 @@
+services:
+  api:
+    build: short-api
+    ports: 
+      - "4000:4000"
+    depends_on:
+      - db
+  db:
+    build: short-db
+    ports:
+      - "5432:5400"
+    volumes:
+      - .data:/data
+  ui:
+    build: short-ui
+    ports:
+      - "3000:3000"
+    depends_on:
+      - api
