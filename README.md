@@ -1,7 +1,7 @@
 # short-links
 Proyecto creado para realizar links mas cortos y aprender como funcionaba Go y Gorilla/Mux en general.
 
-El desarollo Front-End esta realizado unicamente para probar la funcionalidad, hecho con templates de Boostrap. Las proximas actualizaciones van a estar enfocadas en separar el proyecto en Front-End y Back-End utilizando React.js
+El desarollo Front-End esta realizado unicamente para probar la funcionalidad, sientanse libres de modificarlo a gusto.
 
 La idea del proyecto es poder utilizar un dominio corto o empresarial para poder realizar redirecciones a la pagina deseada por mas larga que sea.
 
