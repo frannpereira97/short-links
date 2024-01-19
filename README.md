@@ -1,4 +1,9 @@
 # short-links
+
+<p align="center"> 
+  <img src="https://profile-counter.glitch.me/short-links/count.svg" />
+</p>
+
 Proyecto creado para realizar links mas cortos y aprender como funcionaba Go y Gorilla/Mux en general.
 
 El desarollo Front-End esta realizado unicamente para probar la funcionalidad, sientanse libres de modificarlo a gusto.
